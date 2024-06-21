@@ -1,0 +1,50 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: courses
+  datasource:
+    url: jdbc:mysql://localhost:3306/course_platform
+    username: root
+    password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+      enable_lazy_load_no_trans: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/external
+          jwk-set-uri: http://localhost:8080/realms/external/protocol/openid-connect/certs
+app:
+  auth:
+    tokenSecret: 04ca023b39512e46d0c2cf4b48d5aac61d34302994c87ed4eff225dcf3b0a218739f3897051a057f9b846a69ea2927a587044164b7bae5e1306219d50b588cb1
+    tokenExpirationMsec: 864000000
+    accessExpiration: 1500000
+    refreshExpiration: 604800000
+  cors:
+    allowedOrigins: http://localhost:3000 # Comma separated list of allowed origins
+  oauth2:
+    # After successfully authenticating with the OAuth2 Provider,
+    # we'll be generating an auth token for the user and sending the token to the
+    # redirectUri mentioned by the client in the /oauth2/authorize request.
+    # We're not using cookies because they won't work well in mobile clients.
+    authorizedRedirectUris:
+      - http://localhost:3000/oauth2/redirect
+      - myandroidapp://oauth2/redirect
+      - myiosapp://oauth2/redirect
+cloud:
+  cloudName: dzumda5fa
+  apiKey: 959631823469922
+  apiSecret: NFULtoFFUlC6qCPN1BSiRw5KUGk
+  secure: true
+api:
+    prefix: /api/v1
+test:
+  oauth2:
+    token: http://localhost:8080/realms/external/protocol/openid-connect/token
+    username: ntk241103@gmail.com
+    password: 123
+    grantType: password
+    clientId: external
