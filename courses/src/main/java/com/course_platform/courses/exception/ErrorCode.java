@@ -12,7 +12,7 @@ public enum ErrorCode {
     SECTION_NOT_FOUND(1004,"Section not found",HttpStatus.NOT_FOUND),
     COURSE_NOT_FOUND(1004,"Course not found",HttpStatus.NOT_FOUND),
     LESSON_NOT_FOUND(1004,"Lesson not found",HttpStatus.NOT_FOUND),
-    CATEGORY_NOT_FOUND(1004,"Lesson not found",HttpStatus.NOT_FOUND),
+    CATEGORY_NOT_FOUND(1004,"Category not found",HttpStatus.NOT_FOUND),
     ROLE_NOT_FOUND(1004,"Role not found",HttpStatus.NOT_FOUND),
     TOKEN_NOT_FOUND(1004,"Token not found",HttpStatus.NOT_FOUND),
     NOTE_NOT_FOUND(1004,"Note not found",HttpStatus.NOT_FOUND),
@@ -26,6 +26,11 @@ public enum ErrorCode {
     TOKEN_INVALID(1004,"Token must be not empty",HttpStatus.BAD_REQUEST),
     COURSE_INVALID(1004,"Course must be not empty",HttpStatus.BAD_REQUEST),
     SECTION_INVALID(1004,"Section must be not empty",HttpStatus.BAD_REQUEST),
+    LESSON_INVALID(1004,"Lesson must be not empty",HttpStatus.BAD_REQUEST),
+    NOTE_INVALID(1004,"Note must be not empty",HttpStatus.BAD_REQUEST),
+    SECTION_SOURCE_INVALID(1004,"Section source must be not empty",HttpStatus.BAD_REQUEST),
+    SECTION_DES_INVALID(1004,"Section des must be not empty",HttpStatus.BAD_REQUEST),
+    POSITION_INVALID(1004,"Position must be greater than 0",HttpStatus.BAD_REQUEST),
     TOKEN_EXPRIRED(1004,"Refresh token is expired. Please login to get new token ",HttpStatus.BAD_REQUEST),
     EMAIL_EXIST(1003, "Email is exist", HttpStatus.BAD_REQUEST),
     FILE_INVALID(1003, "File must be not null", HttpStatus.BAD_REQUEST),
@@ -35,7 +40,8 @@ public enum ErrorCode {
     PASSWORD_INVALID(1003, "Password must be greater than {min} characters", HttpStatus.BAD_REQUEST),
     UNUPLOADFILE_EXCEPTION( 1004,"Upload file failed",HttpStatus.BAD_REQUEST),
     RESOURCE_NOT_FOUND( 1004,"Resource not found",HttpStatus.NOT_FOUND),
-    UNSUPPORTED_METHOD( 1005,"Method is not supported",HttpStatus.METHOD_NOT_ALLOWED);
+    UNSUPPORTED_METHOD( 1005,"Method is not supported",HttpStatus.METHOD_NOT_ALLOWED),
+    BAD_REQUEST( 1006,"Bad requested",HttpStatus.BAD_REQUEST);
 
     private int code;
     private String message;

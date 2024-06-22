@@ -73,12 +73,12 @@ public class CourseServiceTest {
                 .build();
     }
     @Test
-    void createUser_validRequest_success() throws Exception {
+    void createCourse_validRequest_success() throws Exception {
         // GIVEN
-
-        Mockito.when(fileService.createFolder(anyString())).thenReturn("1Nv1sCeybfaWm0ggiZfJwvD5f0iw5faGp");
-
-        Mockito.when(courseRepository.save(any())).thenReturn(courseEntity);
+        courseRequest.setCategoryId("36cc2afd-b14e-4723-84fb-48b2034f445d");
+        when(fileService.createFolder(anyString())).thenReturn("1Nv1sCeybfaWm0ggiZfJwvD5f0iw5faGp");
+        when(categoryRepository.findById(anyString())).thenReturn(Optional.ofNullable(category));
+        when(courseRepository.save(any())).thenReturn(courseEntity);
         // WHEN
         var response = courseService.create(courseRequest);
         // THEN
@@ -86,11 +86,10 @@ public class CourseServiceTest {
         Assertions.assertThat(response.getTitle()).isEqualTo("Khóa học js");
     }
     @Test
-    void createUser_invalidUploadFile_fail() throws Exception {
+    void createCourse_invalidUploadFile_fail() throws Exception {
         // GIVEN
 
         doThrow(new CustomRuntimeException(ErrorCode.UNUPLOADFILE_EXCEPTION)).when(fileService).createFolder(anyString());
-
 
         // WHEN
         var exception = assertThrows(CustomRuntimeException.class,() -> courseService.create(courseRequest));
@@ -100,10 +99,12 @@ public class CourseServiceTest {
 
     }
     @Test
-    void updateUser_validRequest_success(){
-        String courseId = "1Nv1sCeybfaWm0ggiZfJwvD5f0iw5faGp";
+    void updateCourse_validRequest_success(){
         // GIVEN
-
+        String courseId = "1Nv1sCeybfaWm0ggiZfJwvD5f0iw5faGp";
+        String title = "Khóa học html,css";
+        courseRequest.setTitle(title);
+        doNothing().when(fileService).updateFolder(anyString(), anyString());
         when(courseRepository.findById(anyString())).thenReturn(Optional.ofNullable(courseEntity));
 
         when(courseRepository.save(courseEntity)).thenReturn(courseEntity);
@@ -111,14 +112,13 @@ public class CourseServiceTest {
         var response = courseService.update(courseId,courseRequest);
         // THEN
        Assertions.assertThat(response.getId()).isEqualTo(courseId);
+        Assertions.assertThat(response.getTitle()).isEqualTo("Khóa học html,css");
     }
     @Test
-    void updateUser_courseNotFound_fail(){
-        String courseId = "1Nv1sCeybfaWm0ggiZfJwvD5f0iw5faGp";
-        // GIVEN
-        doThrow(new CustomRuntimeException(ErrorCode.COURSE_NOT_FOUND)).when(courseRepository).findById(anyString());
+    void updateCourse_courseNotFound_fail(){
 
-        when(courseRepository.save(courseEntity)).thenReturn(courseEntity);
+        // GIVEN
+        String courseId = "1Nv1sCeybfaWm0ggiZfJwvD5f0iw5faG";
         // WHEN
         var exception = assertThrows(CustomRuntimeException.class,() -> courseService.update(courseId,courseRequest));
         // THEN
@@ -126,13 +126,12 @@ public class CourseServiceTest {
         Assertions.assertThat(exception.getErrorCode().getMessage()).isEqualTo("Course not found");
     }
     @Test
-    void updateUser_categoryNotFound_fail(){
+    void updateCourse_categoryNotFound_fail(){
         String courseId = "1Nv1sCeybfaWm0ggiZfJwvD5f0iw5faGp";
         // GIVEN
+        courseRequest.setCategoryId("");
 
         when(courseRepository.findById(anyString())).thenReturn(Optional.ofNullable(courseEntity));
-        doThrow(new CustomRuntimeException(ErrorCode.CATEGORY_NOT_FOUND)).when(categoryRepository).findById(anyString());
-
         when(courseRepository.save(courseEntity)).thenReturn(courseEntity);
         // WHEN
         var exception = assertThrows(CustomRuntimeException.class,() -> courseService.update(courseId,courseRequest));
@@ -141,7 +140,7 @@ public class CourseServiceTest {
         Assertions.assertThat(exception.getErrorCode().getMessage()).isEqualTo("Category not found");
     }
     @Test
-    void getUser_validRequest_success(){
+    void getCourse_validRequest_success(){
 
         // GIVEN
         when(courseRepository.findAll()).thenReturn(new ArrayList<>(List.of(courseEntity)));

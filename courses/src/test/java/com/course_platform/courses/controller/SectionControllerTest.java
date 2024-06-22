@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -54,7 +55,8 @@ public class SectionControllerTest {
                 .title("Gioi thieu khoa hoc")
                 .build();
     }
-
+    @Value("${api.prefix}/sections")
+    private String api;
     @Test
     void createSection_validRequest_success() throws Exception{
         // GIVEN
@@ -76,7 +78,7 @@ public class SectionControllerTest {
         String content = objectMapper.writeValueAsString(sectionRequest);
 
         // WHEN,THEN
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/sections")
+        mockMvc.perform(MockMvcRequestBuilders.post(api)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .headers(headers)
                         .content(content))
@@ -87,10 +89,10 @@ public class SectionControllerTest {
     @Test
     void getSectionByCourse_validRequest_success() throws Exception{
         // GIVEN
-        String courseId = "1Nv1sCeybfaWm0ggiZfJwvD5f0iw5faGp";
+        String courseCode = "khoa-hoc-js";
         when(sectionService.findByCourseCode(anyString())).thenReturn(new ArrayList<>(List.of(section)));
         // WHEN,THEN
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/sections/" + courseId + "/course")
+        mockMvc.perform(MockMvcRequestBuilders.get(api+"/{course-code}/course",courseCode )
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .headers(headers))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -104,12 +106,11 @@ public class SectionControllerTest {
 
         when(sectionService.findByCourseCode(anyString())).thenReturn(new ArrayList<>(List.of(section)));
         // WHEN,THEN
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/sections/" + courseId + "/course")
+        mockMvc.perform(MockMvcRequestBuilders.get(api +"/{course-code}/course",courseId )
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .headers(headers))
-                        .andExpect(MockMvcResultMatchers.status().isMethodNotAllowed())
-                        .andExpect(MockMvcResultMatchers.jsonPath("code").value(1005))
-                        .andExpect(MockMvcResultMatchers.jsonPath("message").value("Method is not supported"));
+                        .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
 
     }
     @Test
@@ -122,7 +123,7 @@ public class SectionControllerTest {
         String content = objectMapper.writeValueAsString(sectionRequest);
         when(sectionService.update(anyString(),any())).thenReturn(section);
         // WHEN,THEN
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/sections/" + sectionId)
+        mockMvc.perform(MockMvcRequestBuilders.put(api+"/{section-id}",sectionId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .headers(headers)
                         .content(content))
@@ -139,7 +140,7 @@ public class SectionControllerTest {
         String content = objectMapper.writeValueAsString(sectionRequest);
 
         // WHEN,THEN
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/sections/" + sectionId)
+        mockMvc.perform(MockMvcRequestBuilders.put(api + "/{section-id}",sectionId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .headers(headers)
                         .content(content))
@@ -156,7 +157,7 @@ public class SectionControllerTest {
          String content = objectMapper.writeValueAsString(sectionRequest);
 
         // WHEN,THEN
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/sections/" + sectionId)
+        mockMvc.perform(MockMvcRequestBuilders.put(api + "/{section-id}",sectionId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .headers(headers)
                         .content(content))

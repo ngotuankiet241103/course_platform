@@ -11,7 +11,7 @@ public class Lesson {
     private String id;
     private String video;
     private String title;
-    private String position;
+    private int position;
     private String code;
     private boolean isBlock;
     private boolean isCompleted;

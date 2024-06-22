@@ -35,7 +35,7 @@ public class SectionServiceImpl implements SectionService {
     public Section create(SectionRequest sectionRequest) {
         SectionEntity sectionEntity = sectionMapper.toSectionEntity(sectionRequest);
         CourseEntity courseEntity = courseRepository.findById(sectionRequest.getCourseId())
-                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.SECTION_NOT_FOUND));
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.COURSE_NOT_FOUND));
         long total = sectionRepository.count();
         sectionEntity.setPosition((int) ++total );
         sectionEntity.setCourse(courseEntity);

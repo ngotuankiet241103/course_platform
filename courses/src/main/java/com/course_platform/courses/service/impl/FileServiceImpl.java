@@ -47,9 +47,9 @@ public class FileServiceImpl implements FileService {
     @Override
     public String uploadFile(FileRequest fileRequest) {
         try {
-
-            if (null != fileRequest.getFile()) {
-                System.out.println(fileRequest.getFile().getOriginalFilename());
+            if(fileRequest.getFile() == null) {
+                throw new CustomRuntimeException(ErrorCode.FILE_INVALID);
+            }
                 File fileMetadata = new File();
                 fileMetadata.setParents(Collections.singletonList(fileRequest.getFolderParentId()));
                 fileMetadata.setName(fileRequest.getFile().getOriginalFilename());
@@ -65,11 +65,11 @@ public class FileServiceImpl implements FileService {
 
                 return uploadFile.getId();
 
-            }
+
         } catch (Exception e) {
             throw new CustomRuntimeException(ErrorCode.UNUPLOADFILE_EXCEPTION);
         }
-        return null;
+
     }
 
     @Override

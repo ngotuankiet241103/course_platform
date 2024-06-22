@@ -40,7 +40,7 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.COURSE_NOT_FOUND));
         if(!course.getTitle().equals(courseRequest.getTitle())){
             updateNameCourse(course.getId(),courseRequest.getTitle());
-            course.setTitle(course.getTitle());
+            course.setTitle(courseRequest.getTitle());
             course.setCode(HandleString.strToCode(courseRequest.getTitle()));
 
         }

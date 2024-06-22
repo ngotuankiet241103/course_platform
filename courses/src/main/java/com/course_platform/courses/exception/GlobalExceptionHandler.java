@@ -1,5 +1,6 @@
 package com.course_platform.courses.exception;
 
+import com.cloudinary.api.exceptions.BadRequest;
 import com.course_platform.courses.dto.response.ApiResponse;
 import jakarta.validation.UnexpectedTypeException;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
@@ -75,6 +76,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
     ResponseEntity<ApiResponse> handleUnsupportedMethod(HttpRequestMethodNotSupportedException exception){
         ErrorCode errorCode = ErrorCode.UNSUPPORTED_METHOD;
+        return ResponseEntity.status(errorCode.getStatus())
+                .body(ApiResponse.builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build());
+    }
+    @ExceptionHandler(value = HttpClientErrorException.BadRequest.class)
+    ResponseEntity<ApiResponse> handleBadRequest(BadRequest exception){
+        ErrorCode errorCode = ErrorCode.BAD_REQUEST;
         return ResponseEntity.status(errorCode.getStatus())
                 .body(ApiResponse.builder()
                         .code(errorCode.getCode())

@@ -39,7 +39,7 @@ public class LessonServiceImpl implements LessonService {
         LessonEntity lesson = createLessonEntity(lessonRequest);
         LessonEntity lessonEntity = lessonRepository.save(lesson);
         openLessonOfCourse(lessonEntity);
-        return lessonMapper.toLesson(lessonEntity);
+        return mappingOne(lessonEntity);
     }
     @Async
     private void openLessonOfCourse(LessonEntity lesson){
@@ -136,17 +136,13 @@ public class LessonServiceImpl implements LessonService {
     }
     @Override
     public Lesson mappingOne(LessonEntity lessonEntity) {
-        return null;
+        return lessonMapper.toLesson(lessonEntity);
     }
 
 
 
     private LessonEntity createLessonEntity(LessonRequest lessonRequest){
-        StringBuilder video = new StringBuilder() ;
-        if(lessonRequest.getFile() != null){
-            video.append(uploadAudio(lessonRequest));
-        }
-
+        String video = uploadAudio(lessonRequest) ;
         LessonEntity lesson = lessonMapper.toLessonEntity(lessonRequest);
         CourseEntity course = courseRepository.findById(lessonRequest.getCourseId())
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.COURSE_NOT_FOUND));

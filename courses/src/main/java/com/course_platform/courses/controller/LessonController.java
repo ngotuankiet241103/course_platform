@@ -42,7 +42,7 @@ public class LessonController {
                 .build();
     }
     @PutMapping("/swap")
-    public ApiResponse<Lesson> updateLesson(@RequestBody LessonSwapRequest lessonSwapRequest){
+    public ApiResponse<Lesson> updateLesson(@RequestBody @Valid LessonSwapRequest lessonSwapRequest){
         return ApiResponse.<Lesson>builder()
                 .result( lessonService.swapLesson(lessonSwapRequest))
                 .build();

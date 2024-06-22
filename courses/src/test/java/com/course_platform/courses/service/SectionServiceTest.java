@@ -97,8 +97,7 @@ public class SectionServiceTest {
     @Test
     void createSection_courseNotFound_fail(){
         // GIVEN
-        doThrow(new CustomRuntimeException(ErrorCode.COURSE_NOT_FOUND)).when(courseRepository).findById(anyString());
-
+        sectionRequest.setCourseId("");
         // WHEN
         var exception= assertThrows(CustomRuntimeException.class,() -> sectionService.create(sectionRequest));
         // THEN
@@ -122,7 +121,7 @@ public class SectionServiceTest {
     void updateSection_validRequest_success(){
         // GIVEN
         String sectionId = "757646e7-e2e2-49c1-a100-6579c758cc71";
-        sectionRequest.setTitle(title);
+
         sectionEntity.setTitle(title);
         when(sectionRepository.existsById(anyString())).thenReturn(true);
         when(sectionRepository.updateTitle(anyString(),anyString())).thenReturn(sectionEntity);

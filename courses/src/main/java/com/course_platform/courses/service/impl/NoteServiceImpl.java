@@ -1,5 +1,6 @@
 package com.course_platform.courses.service.impl;
 
+import com.course_platform.courses.controller.NoteUpdateRequest;
 import com.course_platform.courses.dto.request.NoteRequest;
 import com.course_platform.courses.dto.response.Note;
 import com.course_platform.courses.entity.LessonEntity;
@@ -11,6 +12,7 @@ import com.course_platform.courses.repository.LessonRepository;
 import com.course_platform.courses.repository.NoteRepository;
 import com.course_platform.courses.repository.UserRepository;
 import com.course_platform.courses.service.NoteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -50,7 +52,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public Note update(String noteId, NoteRequest noteRequest) {
+    public Note update(String noteId, @Valid NoteUpdateRequest noteRequest) {
         NoteEntity note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.NOTE_NOT_FOUND));
 
