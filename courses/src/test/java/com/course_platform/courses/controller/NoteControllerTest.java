@@ -67,7 +67,7 @@ public class NoteControllerTest {
                         .content(content))
                         .andExpect(MockMvcResultMatchers.status().isOk())
                         .andExpect(MockMvcResultMatchers.jsonPath("code").value(0))
-                        .andExpect(MockMvcResultMatchers.jsonPath("result.id").value("77a45059-448c-4947-983d-100fcc4807cc"));;
+                        .andExpect(MockMvcResultMatchers.jsonPath("result.id").value("77a45059-448c-4947-983d-100fcc4807cc"));
     }
     @Test
     void createNote_invalidLesson_fail() throws Exception{

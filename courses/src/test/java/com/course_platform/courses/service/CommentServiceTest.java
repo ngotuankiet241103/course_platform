@@ -54,10 +54,6 @@ public class CommentServiceTest {
     private LessonEntity lessonEntity;
     private Authentication authentication;
 
-    @Value("${test.oauth2.username}")
-    private String username;
-    @Value("${test.oauth2.password}")
-    private String password;
     @Autowired
     private AuthRest authRest;
     private String accessToken;
