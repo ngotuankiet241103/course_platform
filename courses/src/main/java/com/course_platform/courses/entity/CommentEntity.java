@@ -1,13 +1,15 @@
 package com.course_platform.courses.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "comment")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CommentEntity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

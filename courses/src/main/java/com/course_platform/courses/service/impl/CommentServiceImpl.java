@@ -82,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
         CommentEntity commentEntity = commentRepository.findById(id)
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.COMMENT_NOT_FOUND));
         commentEntity.setContent(commentUpdateRequest.getContent());
-        return mappingOne(commentRepository.save(commentEntity));
+        return mappingOne(commentRepository.updateComment(commentEntity.getId(),commentEntity.getContent()));
     }
 
     private CommentEntity createCommentEntity(CommentRequest commentRequest){

@@ -1,10 +1,14 @@
 package com.course_platform.courses.dto.request;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CommentUpdateRequest {
+    @NotEmpty(message = "CONTENT_INVALID")
     private String content;
 }

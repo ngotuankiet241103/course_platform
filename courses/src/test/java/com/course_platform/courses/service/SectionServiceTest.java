@@ -49,8 +49,7 @@ public class SectionServiceTest {
     private String username;
     @Value("${test.oauth2.password}")
     private String password;
-    @MockBean
-    private SecurityContext securityContext;
+
 
     @BeforeEach
     void initData(){

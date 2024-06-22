@@ -2,12 +2,10 @@ package com.course_platform.courses.controller;
 
 import com.course_platform.courses.auth.AuthRest;
 import com.course_platform.courses.auth.RestConfig;
-import com.course_platform.courses.dto.request.LessonRequest;
-import com.course_platform.courses.dto.request.LessonSwapRequest;
 import com.course_platform.courses.dto.request.NoteRequest;
-import com.course_platform.courses.dto.response.Lesson;
 import com.course_platform.courses.dto.response.Note;
 import com.course_platform.courses.service.NoteService;
+import com.course_platform.courses.service.NoteServiceTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +21,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import static org.mockito.Mockito.*;
 @SpringBootTest
@@ -43,8 +40,6 @@ public class NoteControllerTest {
     private ObjectMapper objectMapper;
     @Value("${api.prefix}/notes")
     private String api;
-    private MultiValueMap<String,String> params;
-    private MockMultipartFile file;
     @BeforeEach
     void initData(){
         objectMapper = new ObjectMapper();
@@ -85,7 +80,7 @@ public class NoteControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .headers(headers)
                         .content(content))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value(1004))
                 .andExpect(MockMvcResultMatchers.jsonPath("message").value("Lesson must be not empty"));;
     }
@@ -100,7 +95,7 @@ public class NoteControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .headers(headers)
                         .content(content))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value(1004))
                 .andExpect(MockMvcResultMatchers.jsonPath("message").value("Note must be not empty"));;
     }
@@ -114,5 +109,80 @@ public class NoteControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value(0))
                 .andExpect(MockMvcResultMatchers.jsonPath("result.id").value("77a45059-448c-4947-983d-100fcc4807cc"));;
+    }
+    @Test
+    void updateNote_invalidNote_fail() throws Exception{
+        // GIVEN
+        String noteId = "77a45059-448c-4947-983d-100fcc4807cc";
+        noteRequest.setNote("");
+        String content = objectMapper.writeValueAsString(noteRequest);
+
+        // WHEN,THEN
+        mockMvc.perform(MockMvcRequestBuilders.post(api + "/{note-id}",noteId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .headers(headers)
+                        .content(content))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("code").value(1004))
+                .andExpect(MockMvcResultMatchers.jsonPath("message").value("Note must be not empty"));;
+    }
+    @Test
+    void updateNote_invalidParam_fail() throws Exception{
+        // GIVEN
+        String noteId = "";
+        noteRequest.setNote("");
+        String content = objectMapper.writeValueAsString(noteRequest);
+
+        // WHEN,THEN
+        mockMvc.perform(MockMvcRequestBuilders.post(api + "/{note-id}",noteId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .headers(headers)
+                        .content(content))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+    }
+    @Test
+    void updateNote_validRequest_fail() throws Exception{
+        // GIVEN
+        String noteId = "77a45059-448c-4947-983d-100fcc4807cc";
+        noteRequest.setNote("edit ghi chu");
+        String content = objectMapper.writeValueAsString(noteRequest);
+        when(noteService.update(anyString(),any())).thenReturn(note);
+        // WHEN,THEN
+        mockMvc.perform(MockMvcRequestBuilders.post(api + "/{note-id}",noteId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .headers(headers)
+                        .content(content))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("code").value(0))
+                .andExpect(MockMvcResultMatchers.jsonPath("result.id").value("77a45059-448c-4947-983d-100fcc4807cc"));;;
+
+    }
+    @Test
+    void deleteNote_validRequest_success() throws Exception{
+        // GIVEN
+        String noteId = "77a45059-448c-4947-983d-100fcc4807cc";
+
+        doNothing().when(noteService).delete(anyString());
+        // WHEN,THEN
+        mockMvc.perform(MockMvcRequestBuilders.delete(api + "/{note-id}",noteId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .headers(headers))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("code").value(0));
+
+    }
+    @Test
+    void deleteNote_invalidParam_success() throws Exception{
+        // GIVEN
+        String noteId = "";
+
+        // WHEN,THEN
+        mockMvc.perform(MockMvcRequestBuilders.delete(api + "/{note-id}",noteId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .headers(headers))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+
     }
 }

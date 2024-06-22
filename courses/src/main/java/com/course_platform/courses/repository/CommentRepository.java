@@ -16,4 +16,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity,String> {
     void updateNodeRight(String rootId, int nodeLeft);
 
     List<CommentEntity> findByLessonId(String lessonId);
+    @Modifying
+    @Query("UPDATE CommentEntity c SET c.content = ?2 WHERE c.id = ?1")
+    CommentEntity updateComment(String id, String content);
 }

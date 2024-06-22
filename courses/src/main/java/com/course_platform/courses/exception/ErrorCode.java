@@ -21,6 +21,7 @@ public enum ErrorCode {
     TITLE_INVALID(1003, "Title must be not empty", HttpStatus.BAD_REQUEST),
     DESCRIPTION_INVALID(1003, "Description must be not empty", HttpStatus.BAD_REQUEST),
     IMAGE_INVALID(1003, "Image must be not empty", HttpStatus.BAD_REQUEST),
+    CONTENT_INVALID(1004,"Content must be not empty",HttpStatus.BAD_REQUEST),
     PRICE_INVALID(1003, "Price must be greater than 0 or equals 0", HttpStatus.BAD_REQUEST),
     ORDER_FAILED(1004,"You bought course",HttpStatus.BAD_REQUEST),
     TOKEN_INVALID(1004,"Token must be not empty",HttpStatus.BAD_REQUEST),
