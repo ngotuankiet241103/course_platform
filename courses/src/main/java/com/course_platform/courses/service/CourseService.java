@@ -13,4 +13,8 @@ public interface CourseService extends BaseService< CourseEntity,Course> {
     Course create(CourseRequest courseRequest);
 
     Course update(String courseId, CourseRequest courseRequest);
+
+    List<Course> findNewCourse();
+
+    boolean isFree(String courseId);
 }

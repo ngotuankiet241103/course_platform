@@ -4,6 +4,7 @@ package com.course_platform.courses.config;
 import jakarta.servlet.FilterChain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,6 +24,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 
 @Configuration
@@ -32,7 +36,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final Customizer<OAuth2ResourceServerConfigurer<HttpSecurity>.JwtConfigurer> jwtConfig;
-
+    @Value("${app.cors.allowedOrigins}")
+    private String[] allowedOrigins ;
+    @Value(("${api.prefix}"))
+    private String api;
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -42,6 +49,8 @@ public class SecurityConfig {
                         .hasAuthority("SCOPE_read")
                         .requestMatchers(HttpMethod.POST, "/foos")
                         .hasAuthority("SCOPE_write")
+                        .requestMatchers(HttpMethod.GET,"/ws/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/orders/payment").permitAll()
                         .anyRequest()
                         .authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfig));

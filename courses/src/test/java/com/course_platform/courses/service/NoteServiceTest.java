@@ -1,6 +1,6 @@
 package com.course_platform.courses.service;
 
-import com.course_platform.courses.controller.NoteUpdateRequest;
+import com.course_platform.courses.dto.request.AuthenticationRequest;
 import com.course_platform.courses.dto.request.NoteRequest;
 import com.course_platform.courses.entity.LessonEntity;
 import com.course_platform.courses.entity.NoteEntity;
@@ -41,7 +41,7 @@ public class NoteServiceTest {
     private String username;
     @Value("${test.oauth2.password}")
     private String password;
-    private NoteUpdateRequest noteUpdateRequest;
+    private AuthenticationRequest.NoteUpdateRequest noteUpdateRequest;
     @BeforeEach
     void initData(){
 
@@ -56,7 +56,7 @@ public class NoteServiceTest {
         lessonEntity = LessonEntity.builder()
                 .id("18ce4226-55b9-4fa0-9894-b32a29c665b9")
                 .build();
-        noteUpdateRequest = NoteUpdateRequest.builder()
+        noteUpdateRequest = AuthenticationRequest.NoteUpdateRequest.builder()
                 .note("ghi chu")
                 .build();
         authentication = new UsernamePasswordAuthenticationToken(username,password, List.of(new SimpleGrantedAuthority("USER")));

@@ -1,6 +1,6 @@
 package com.course_platform.courses.service.impl;
 
-import com.course_platform.courses.controller.NoteUpdateRequest;
+import com.course_platform.courses.dto.request.AuthenticationRequest;
 import com.course_platform.courses.dto.request.NoteRequest;
 import com.course_platform.courses.dto.response.Note;
 import com.course_platform.courses.entity.LessonEntity;
@@ -26,6 +26,7 @@ public class NoteServiceImpl implements NoteService {
     private final NoteMapper noteMapper;
     private final UserRepository userRepository;
     private final NoteRepository noteRepository;
+
     @Override
     public Note mappingOne(NoteEntity noteEntity) {
         return noteMapper.toNote(noteEntity);
@@ -52,7 +53,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public Note update(String noteId, @Valid NoteUpdateRequest noteRequest) {
+    public Note update(String noteId, @Valid AuthenticationRequest.NoteUpdateRequest noteRequest) {
         NoteEntity note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.NOTE_NOT_FOUND));
 

@@ -15,5 +15,6 @@ public class Course {
     private String description;
     private double price;
     private Category category;
+    private boolean isFree;
 
 }

@@ -53,6 +53,20 @@ public class CourseServiceImpl implements CourseService {
         course.setPrice(courseRequest.getPrice());
         return mappingOne(courseRepository.save(course));
     }
+
+    @Override
+    public List<Course> findNewCourse() {
+
+        return null;
+    }
+
+    @Override
+    public boolean isFree(String courseId) {
+        CourseEntity course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.COURSE_NOT_FOUND));
+        return course.isFree();
+    }
+
     @Async
     private void updateNameCourse(String fileId,String newName){
         fileService.updateFolder(fileId,newName);
@@ -60,8 +74,8 @@ public class CourseServiceImpl implements CourseService {
 
     private CourseEntity createCourseEntity(CourseRequest courseRequest){
         String folderId = fileService.createFolder(courseRequest.getTitle());
-
         CourseEntity course = courseMapper.toCourseEntity(courseRequest);
+        course.setFree(courseRequest.getPrice() == 0);
         course.setId(folderId);
         course.setCode(HandleString.strToCode(courseRequest.getTitle()));
         course.setCategory(categoryRepository.findById(courseRequest.getCategoryId())
@@ -75,6 +89,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course mappingOne(CourseEntity courseEntity) {
+        System.out.println(courseEntity.isFree());
         Course course = courseMapper.toCourse(courseEntity);
         course.setCategory(categoryMapper.toCategory(courseEntity.getCategory()));
         return course;

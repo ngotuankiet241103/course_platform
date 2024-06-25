@@ -41,6 +41,15 @@ cloud:
   secure: true
 api:
     prefix: /api/v1
+vnPay:
+  ipAddress: 127.0.0.1
+  version: 2.1.0
+  command: pay
+  url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  tmnCode: OALODCMM
+  hashSecret: NYJAZKCIHLHLTCXYHEGRXPJBPKBGNRFU
+  returnUrl: http://localhost:8081/api/v1/orders/payment
+
 test:
   oauth2:
     token: http://localhost:8080/realms/external/protocol/openid-connect/token
@@ -48,3 +57,8 @@ test:
     password: 123
     grantType: password
     clientId: external
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

@@ -1,5 +1,6 @@
 package com.course_platform.courses.controller;
 
+import com.course_platform.courses.dto.request.AuthenticationRequest;
 import com.course_platform.courses.dto.request.NoteRequest;
 import com.course_platform.courses.dto.response.ApiResponse;
 import com.course_platform.courses.dto.response.Note;
@@ -28,7 +29,7 @@ public class NoteController {
                 .build();
     }
     @PutMapping("/{note-id}")
-    public ApiResponse<Note> update(@RequestBody @Valid NoteUpdateRequest noteRequest,
+    public ApiResponse<Note> update(@RequestBody @Valid AuthenticationRequest.NoteUpdateRequest noteRequest,
                                     @PathVariable("note-id") String noteId){
         return ApiResponse.<Note>builder()
                 .result(noteService.update(noteId,noteRequest))

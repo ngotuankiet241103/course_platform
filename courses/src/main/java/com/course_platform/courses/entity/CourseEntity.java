@@ -25,5 +25,7 @@ public class CourseEntity extends BaseEntity{
     private double price;
     @ManyToOne(fetch = FetchType.EAGER)
     private CategoryEntity category;
+    @Column
+    private boolean isFree;
 
 }
