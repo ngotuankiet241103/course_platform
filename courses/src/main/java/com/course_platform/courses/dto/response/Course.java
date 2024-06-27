@@ -2,6 +2,8 @@ package com.course_platform.courses.dto.response;
 
 import lombok.*;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,5 +18,7 @@ public class Course {
     private double price;
     private Category category;
     private boolean isFree;
+    private int totalLearner;
+    private Map<String,Object> detail;
 
 }

@@ -8,7 +8,9 @@ import lombok.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "orders",indexes = {
+        @Index(name = "course_id_idx", columnList = "courseId, isCompleted", unique = true)
+})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

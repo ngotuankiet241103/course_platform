@@ -45,12 +45,12 @@ public class SecurityConfig {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable())
-                .authorizeHttpRequests(authz -> authz.requestMatchers(HttpMethod.GET, "/foos/**")
-                        .hasAuthority("SCOPE_read")
+                .authorizeHttpRequests(authz -> authz.requestMatchers(HttpMethod.GET, api  + "/courses")
+                        .permitAll()
                         .requestMatchers(HttpMethod.POST, "/foos")
                         .hasAuthority("SCOPE_write")
                         .requestMatchers(HttpMethod.GET,"/ws/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/orders/payment").permitAll()
+                        .requestMatchers(HttpMethod.GET, api + "/orders/payment").permitAll()
                         .anyRequest()
                         .authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfig));

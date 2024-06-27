@@ -8,4 +8,6 @@ public interface OrderService {
     void updateStatus(String code, String status);
 
     String generateUrl(String code, String redirectUrl);
+
+    String delayGenerateUrl(String code, String redirectUrl);
 }

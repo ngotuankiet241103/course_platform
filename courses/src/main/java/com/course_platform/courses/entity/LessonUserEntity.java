@@ -21,4 +21,6 @@ public class LessonUserEntity {
     private boolean isCompleted;
     @Column
     private Date timeCompleted;
+    @Column
+    private String courseId;
 }

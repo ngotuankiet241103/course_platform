@@ -14,6 +14,7 @@ import com.course_platform.courses.service.OrderService;
 import com.course_platform.courses.utils.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
     public String create(OrderRequest orderRequest, String code) {
         OrderEntity order = createOrderEntity(orderRequest);
         order.setCode(code);
+
         orderRepository.save(order);
         return "Buy course success";
     }
@@ -47,18 +49,20 @@ public class OrderServiceImpl implements OrderService {
         order.setCompleted(true);
         order.setOrderStatus(check ? OrderStatus.COMPLETED : OrderStatus.CANCEL);
         orderRepository.save(order);
-        System.out.println("h1");
+        if(check){
+            CourseEntity course = courseRepository.findById(order.getId().getCourseId())
+                    .orElseThrow(() -> new CustomRuntimeException(ErrorCode.COURSE_NOT_FOUND));
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            openCourse(course, authentication.getName());
+        }
         latch.countDown();
 
     }
 
     @Override
     public String generateUrl(String code, String redirectUrl) {
-        latch = new CountDownLatch(1);
-        System.out.println("helo");
-        try {
-            latch.await(15,TimeUnit.MINUTES);
-            System.out.println("helo");
+
+
             OrderEntity order = orderRepository.findByCode(code)
                     .orElseThrow(() -> new CustomRuntimeException(ErrorCode.ORDER_FAILED));
             CourseEntity course = courseRepository.findById(order.getId().getCourseId())
@@ -69,8 +73,16 @@ public class OrderServiceImpl implements OrderService {
             url.append("&status=");
             url.append(order.getOrderStatus().getStatus());
 
-            System.out.println(url);
             return url.toString();
+
+    }
+
+    @Override
+    public String delayGenerateUrl(String code, String redirectUrl) {
+        latch = new CountDownLatch(1);
+        try {
+            latch.await(15,TimeUnit.MINUTES);
+            return generateUrl(code,redirectUrl);
         }
         catch (InterruptedException e){
             System.out.println(e.getMessage());
@@ -87,14 +99,17 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.COURSE_NOT_FOUND));
 
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        boolean check = course.getPrice() == 0;
         OrderId orderId = new OrderId(course.getId(),userId);
+        if(check){
+            openCourse(course,userId);
+        }
 
-        openCourse(course,userId);
         return OrderEntity.builder()
                 .timeOrder(new Date())
                 .id(orderId)
-                .isCompleted(course.getPrice() == 0)
-                .orderStatus(course.getPrice() == 0 ? OrderStatus.COMPLETED : OrderStatus.PENDING)
+                .isCompleted(check)
+                .orderStatus(check ? OrderStatus.COMPLETED : OrderStatus.PENDING)
                 .build();
 
     }

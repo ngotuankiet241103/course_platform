@@ -39,16 +39,22 @@ public class OrderController {
         RedirectView redirectView = new RedirectView();
         String code = Payment.getRandomNumber(9);
         orderService.create(orderRequest,code);
+        String url;
         if(!isFree){
 
             String paymentUrl = paymentService.payment(orderRequest.getCourseId(),code);
             redirectView.setUrl(paymentUrl);
             messagingTemplate.convertAndSend("/topic/orders/"+ authentication.getName() + "/messages", redirectView);
-            String url = orderService.generateUrl(code,redirectUrl);
+            url = orderService.delayGenerateUrl(code,redirectUrl);
             redirectView.setUrl(url);
 
             messagingTemplate.convertAndSend("/topic/orders/"+ authentication.getName() + "/messages", redirectView);
 
+        }
+        else{
+            url = orderService.generateUrl(code,redirectUrl);
+            redirectView.setUrl(url);
+            messagingTemplate.convertAndSend("/topic/orders/"+ authentication.getName() + "/messages", redirectView);
         }
 
     }

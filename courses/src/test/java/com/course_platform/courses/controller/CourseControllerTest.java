@@ -1,15 +1,13 @@
 package com.course_platform.courses.controller;
 
 import com.course_platform.courses.auth.AuthRest;
-import com.course_platform.courses.auth.O2Auth;
 import com.course_platform.courses.auth.RestConfig;
 import com.course_platform.courses.dto.request.CourseRequest;
 import com.course_platform.courses.dto.response.Course;
+import com.course_platform.courses.dto.response.Pagination;
+import com.course_platform.courses.dto.response.Paging;
 import com.course_platform.courses.service.CourseService;
-import com.course_platform.courses.service.FileService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -20,6 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -44,6 +44,8 @@ public class CourseControllerTest {
     private Course course;
     private String accessToken;
     private  HttpHeaders headers;
+    private Pageable pageable;
+    private Sort sort;
     @Autowired
     private AuthRest authRest;
      private  ObjectMapper objectMapper;
@@ -53,6 +55,7 @@ public class CourseControllerTest {
        accessToken = authRest.login();
        headers  = new HttpHeaders();
        headers.add("Authorization","Bearer " + accessToken);
+
        courseRequest = CourseRequest.builder()
                 .title("Khóa học js")
                 .price(0)
@@ -260,9 +263,12 @@ public class CourseControllerTest {
     @Test
     void getCourse_validRequest_Success() throws Exception {
         // GIVEN
-
+        Paging<Course> response = Paging.<Course>builder()
+                .data(List.of(course))
+                .pagination(Pagination.builder().build())
+                .build();
         String content = objectMapper.writeValueAsString(courseRequest);
-        Mockito.when(courseService.findAll()).thenReturn(List.of(course));
+        Mockito.when(courseService.findAll(pageable)).thenReturn(response);
 
         // WHEN,THEN
 

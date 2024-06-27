@@ -13,4 +13,8 @@ public interface OrderRepository extends JpaRepository<OrderEntity, OrderId> {
     List<OrderEntity> findByIdCourseId(String courseId);
 
     Optional<OrderEntity> findByCode(String code);
+
+    int countByIdCourseIdAndIsCompleted(String id, boolean b);
+
+    boolean existsByIdUserIdAndIdCourseIdAndIsCompleted(String name, String id, boolean b);
 }

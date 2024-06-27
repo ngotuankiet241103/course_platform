@@ -11,16 +11,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpHeaders;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +39,8 @@ public class CourseServiceTest {
     private HttpHeaders headers;
     private String accessToken;
     private CategoryEntity category;
+    private Pageable pageable;
+    private Sort sort;
     @MockBean
     private CategoryRepository categoryRepository;
 
@@ -143,13 +141,16 @@ public class CourseServiceTest {
     void getCourse_validRequest_success(){
 
         // GIVEN
-        when(courseRepository.findAll()).thenReturn(new ArrayList<>(List.of(courseEntity)));
+        pageable = PageRequest.of(0,5);
+        List<CourseEntity> courses = List.of(courseEntity);
+        Page<CourseEntity> page = new PageImpl<>(courses,pageable,courses.size());
+        when(courseRepository.findAll(pageable)).thenReturn(page);
 
         // WHEN
-        var response = courseService.findAll();
+        var response = courseService.findAll(pageable);
         // THEN
-        Assertions.assertThat(response.stream().anyMatch(course -> course.getId().equals(courseEntity.getId())))
-                .isEqualTo(true);
+        Assertions.assertThat(response.getPagination().getPage())
+                .isEqualTo(1);
 
     }
 }

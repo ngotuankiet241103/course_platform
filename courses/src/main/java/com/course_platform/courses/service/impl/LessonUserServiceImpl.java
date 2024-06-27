@@ -17,24 +17,26 @@ public class LessonUserServiceImpl implements LessonUserService {
     private final LessonRepository lessonRepository;
     @Override
     public void create(CourseEntity course, String userId) {
+        System.out.println(course.getId());
         List<LessonEntity> lessons = lessonRepository.findByCourseIdOrderByPosition(course.getId());
-        openLessons(lessons,userId);
+        openLessons(course.getId(), lessons,userId);
     }
-    private void openLessons(List<LessonEntity> lessons, String userId){
+    private void openLessons(String courseId,List<LessonEntity> lessons, String userId){
         if(lessons.size() == 0) return;
         LessonEntity firstLesson = lessons.get(0);
-        openLesson(firstLesson,userId,false,false);
+        openLesson(courseId, firstLesson,userId,false,false);
         for(int i=1; i < lessons.size(); i++){
             LessonEntity lesson = lessons.get(i);
-            openLesson(lesson,userId,true,false);
+            openLesson(courseId,lesson,userId,true,false);
         }
     }
-    private void openLesson(LessonEntity lesson,String userId,boolean isBlock,boolean isCompleted){
+    private void openLesson(String courseId,LessonEntity lesson,String userId,boolean isBlock,boolean isCompleted){
         LessonUserId lessonUserId = new LessonUserId(lesson.getId(),userId);
         LessonUserEntity lessonUserEntity = LessonUserEntity.builder()
                 .id(lessonUserId)
                 .isBlock(isBlock)
                 .isCompleted(isCompleted)
+                .courseId(courseId)
                 .build();
         lessonUserRepository.save(lessonUserEntity);
 

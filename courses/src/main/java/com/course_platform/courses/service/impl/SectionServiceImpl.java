@@ -31,7 +31,6 @@ public class SectionServiceImpl implements SectionService {
     private final CourseRepository courseRepository;
     private final LessonMapper lessonMapper;
     private final LessonUserRepository lessonUserRepository;
-
     public Section create(SectionRequest sectionRequest) {
         SectionEntity sectionEntity = sectionMapper.toSectionEntity(sectionRequest);
         CourseEntity courseEntity = courseRepository.findById(sectionRequest.getCourseId())
@@ -39,6 +38,7 @@ public class SectionServiceImpl implements SectionService {
         long total = sectionRepository.count();
         sectionEntity.setPosition((int) ++total );
         sectionEntity.setCourse(courseEntity);
+
         return sectionMapper.toSection(sectionRepository.save(sectionEntity));
     }
 

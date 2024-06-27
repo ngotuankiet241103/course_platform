@@ -16,8 +16,10 @@ import com.course_platform.courses.service.LessonService;
 import com.course_platform.courses.utils.HandleString;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,24 +35,26 @@ public class LessonServiceImpl implements LessonService {
     private final LessonRepository lessonRepository;
     private final LessonUserRepository lessonUserRepository;
     private final OrderRepository orderRepository;
+    private final Converter<JwtAuthenticationToken,UserPrincipal> converter;
 
     @Transactional
     public Lesson create(LessonRequest lessonRequest) {
         LessonEntity lesson = createLessonEntity(lessonRequest);
         LessonEntity lessonEntity = lessonRepository.save(lesson);
-        openLessonOfCourse(lessonEntity);
+        openLessonOfCourse(lessonEntity,lessonRequest.getCourseId());
         return mappingOne(lessonEntity);
     }
     @Async
-    private void openLessonOfCourse(LessonEntity lesson){
+    private void openLessonOfCourse(LessonEntity lesson,String courseId){
         List<OrderEntity> orders = orderRepository.findByIdCourseId(lesson.getCourse().getId());
         List<String> users = orders.stream().map(order -> order.getId().getUserId()).toList();
         users.forEach(user -> {
-            LessonUserEntity lessonUserEntity = lessonUserRepository.findByIdUserIdNewest(user);
+            LessonUserEntity lessonUserEntity = lessonUserRepository.findByIdUserIdAndCourseIdNewest(user,courseId);
             LessonUserId id = new LessonUserId(lesson.getId(),user);
             LessonUserEntity lessonUser = LessonUserEntity.builder()
                     .id(id)
                     .isCompleted(false)
+                    .courseId(courseId)
                     .build();
             if(lessonUserEntity != null){
                 LessonEntity lessonEntity = lessonRepository.findById(lessonUserEntity.getId().getLessonId())
@@ -73,7 +77,7 @@ public class LessonServiceImpl implements LessonService {
     public Lesson update(LessonUpdateRequest lessonUpdateRequest) {
         LessonEntity lessonEntity = lessonRepository.findById(lessonUpdateRequest.getId())
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.LESSON_NOT_FOUND));
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrincipal userPrincipal =  converter.convert((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication());
         lessonUserRepository.updateCompleted(userPrincipal.getId(),lessonEntity.getId());
         return openNextLesson(lessonEntity,userPrincipal);
     }

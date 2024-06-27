@@ -17,4 +17,5 @@ public class LessonUserId {
     private String lessonId;
     @Column
     private String userId;
+
 }

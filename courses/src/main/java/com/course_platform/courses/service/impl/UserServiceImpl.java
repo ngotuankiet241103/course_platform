@@ -47,7 +47,9 @@ public class UserServiceImpl implements UserService {
         UserPrincipal userPrincipal = converter.convert((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication());
         String image  = userRepository.findById(userPrincipal.getId()).map(userEntity -> userEntity.getAvatar()).orElse(null);
         userPrincipal.setAvatar(image);
-        return userMapper.toUser(userPrincipal);
+        User user = userMapper.toUser(userPrincipal);
+        user.setName(userPrincipal.getName());
+        return user;
     }
 
     @Override
